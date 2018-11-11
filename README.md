@@ -1,3 +1,5 @@
+_TODO: an actual leaking pipeline. Have color-coded dots that "leak" out of the main pipeline as we advance faculty status._
+
 # Faculty Diversity at Columbia University
 
 An analysis of faculty diversity at Columbia University from 2007 to 2017.

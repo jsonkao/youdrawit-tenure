@@ -1,4 +1,4 @@
-_TODO: an actual leaking pipeline. Have color-coded dots that "leak" out of the main pipeline as we advance faculty status._
+_TODO: an actual leaking pipeline. Have color-coded dots that "leak" out of the main pipeline as we advance faculty status. (But remember, the MVP is still just the you-draw-it's.)_
 
 # Faculty Diversity at Columbia University
 

@@ -16,4 +16,3 @@ Data was taken from the Office of the Provost ([source](https://provost.columbia
 ![steps](./img/steps.png)
 
 ![race-ethnicity](./img/race-ethnicity.png)
-

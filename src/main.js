@@ -34,7 +34,6 @@ const statuses = {
   'EL': 'not tenured, but eligible for tenure',
   'TE': 'tenured',
 };
-let data;
 
 let width = 860;
 const margin = { top: 10, right: 100, bottom: 50, left: 100 };
@@ -47,7 +46,7 @@ const height = width * 5 / 8.6;
 
 function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false) {
   const titleText = `${divisions[div]} faculty that are ${statuses[status]}.`;
-  const data = DATA[div + '-' + status];
+  const data = DATA[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
   // Add chart svg to the page, use margin conventions

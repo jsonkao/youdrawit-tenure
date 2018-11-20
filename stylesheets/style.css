@@ -6,3 +6,271 @@
   font-weight: normal;
   font-style: normal;
 }
+
+#page-title {
+  padding: 0 10%;
+  margin-bottom: 4rem;
+}
+
+#page-title h1 {
+  margin: 2em auto 1rem auto;
+  max-width: 15em;
+  font-family: Roboto;
+  font-size: 3.5em;
+  text-align: center;
+}
+
+@media (max-width: 494px) {
+  #page-title {
+    padding: 0;    
+  }
+
+  #page-title h1 {
+    font-size: 3em;
+  }
+}
+
+#meta {
+  margin: 0 auto;
+  max-width: 500px;
+  display: flex;
+  padding: 20px;
+  justify-content: space-around;
+}
+
+#meta a {
+  font-size: 18px;
+  font-family: Courier, monospace;
+  color: rgb(0,0,238) !important;
+}
+
+p {
+  font-family: Open Sans;
+  font-size: 19px;
+  max-width: 500px;
+  margin: 10px auto;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+p b {
+  font-weight: 700;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-container {
+  margin-bottom: 100px;
+  width: 100%;
+}
+
+.chart-container > div {
+  margin-bottom: 50px;
+}
+
+.svg-container {
+  display: flex;
+  justify-content: center;
+}
+
+.axis-label {
+  font-family: Roboto;
+  font-size: 15px;
+  user-select: none;
+}
+
+.x.axis-label {
+  transform: translateY(40px);
+}
+
+.y.axis-label {
+  transform-origin: left;
+  transform: rotate(-90deg) translate(-20px, -18px);
+}
+
+.band {
+  fill: #fff;
+  stroke-opacity: 1;
+  stroke: #888;
+  stroke-dasharray: 8 10;
+}
+
+.yourpath {
+  stroke: #80b1d3;
+  fill: none;
+  stroke-width: 2px;
+}
+
+.yourpath.completed {
+  stroke: #fff;
+  stroke-width: 4px;
+}
+
+.area {
+  transform: translateX(1px);
+}
+
+.below {
+  fill: #fb8072;
+}
+
+.above {
+  fill: #8dd3c7;
+}
+
+.axis .tick text {
+  font-family: Roboto;
+  user-select: none;
+  font-size: 13px;
+}
+
+.y.axis g:nth-child(2) { /* removes first 0% label to help with crowdedness */
+  display: none;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px auto 25px auto;
+  max-width: 40rem;
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 15px 0;
+  width: 200px;
+  font-family: Atlas Grotesk;
+  font-size: 13px;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  background: #cb4e4e;
+  color: #fff;
+  box-shadow: 0 6px #ab3c3c;
+  -webkit-transition: none;
+  -moz-transition: none;
+  transition: none;
+}
+
+.button:hover {
+  box-shadow: 0 4px #ab3c3c;
+  top: 2px;
+}
+
+.button:active {
+  box-shadow: 0 0 #ab3c3c;
+  top: 6px;
+}
+
+.button:disabled,
+.button[disabled] {
+  background-color: #cccccc;
+  color: #666666;
+  box-shadow: 0 6px #888;
+}
+
+.button:disabled:hover,
+.button[disabled]:hover {
+  box-shadow: 0 4px #888;
+  top: 2px;
+}
+
+.button:disabled:active,
+.button[disabled]:active {
+  box-shadow: 0 0 #ab3c3c;
+  top: 6px;
+}
+
+.line {
+  stroke: #0F3E3F;
+  stroke-width: 2.5px;
+  fill: none;
+}
+
+.dot {    
+  fill: #2B4141;
+}
+
+.label {
+  font-family: Atlas Grotesk;
+  font-size: 20px;
+}
+
+.label-line {
+  stroke-width: 1.5px;
+  stroke: #333;
+}
+
+.title {
+  font-family: Roboto;
+  font-size: 18px;
+  margin-bottom: 5px;
+  text-align: center;
+  user-select: none;
+}
+
+.area-label {
+  font-family: Atlas Grotesk;
+  font-size: 15px;
+  fill: #111;
+}
+
+.area-label-container {
+  opacity: 0.8;
+  width: 80px;
+  height: 30px;
+  fill: #fff;
+}
+
+.area-label-container.women {
+  transform: translate(-40px, -21px);
+}
+
+.area-label-container.men {
+  transform: translate(-27px, -21px);
+  width: 54px;
+}
+
+.parity-line {
+  stroke-dasharray: 2%;
+  stroke: #222;
+  stroke-opacity: 0.7;
+}
+
+.parity-label {
+  font-family: Roboto;
+  font-size: 11px;
+  fill: #2B4141;
+  user-select: none;
+}
+
+.highlighted {
+  fill: #ffffb3;
+  fill-opacity: 0.8;
+}
+
+.draw-instruction {
+  text-anchor: middle;
+  text-decoration: underline;
+  font-family: Roboto;
+  font-size: 24px;
+}
+
+.line-label {
+  transform: translate(8px, 4px);
+  font-family: Roboto;
+}

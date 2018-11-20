@@ -46,7 +46,7 @@ const height = width * 5 / 8.6;
 
 function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false) {
   const titleText = `${divisions[div]} faculty that are ${statuses[status]}.`;
-  const data = DATA[div + '-' + status].map(d => d['% Women']);
+  const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
   // Add chart svg to the page, use margin conventions
@@ -274,8 +274,8 @@ class Activity {
       .append('div')
       .attr('class', 'chart-container');
 
-    this.drawChart(0);
-    this.youDrawIt(3);
+    this.drawChart('NE');
+    this.youDrawIt('TE');
   }
 
   drawChart(status) {
@@ -465,15 +465,6 @@ class Activity {
 }
 
 let actNum = 0;
-const next = () => actNum < 4 && new Activity(actNum++);
+// const next = () => actNum < 4 && new Activity(actNum++);
 
-d3.json('data/pipe_counts.json').then(json => {
-  data = json;
-  // alert('This is a work in progress of a You-Draw-It. On the blank charts, draw/predict the female representation line.');
-  next();
-});
-
-/*
-// when time for 2 fillBt's, check out https://d3indepth.com/shapes/, stack.offset()
-const fillBt = d3.area().y0(height);
-*/
+new Activity('HUM');

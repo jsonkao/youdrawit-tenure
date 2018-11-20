@@ -5,6 +5,8 @@ const END_YEAR = 2017;
 const YEARS = d3.range(START_YEAR, END_YEAR + 1);
 const numYears = YEARS.length;
 
+const animTime = 500; // transition duration constant
+
 // Copy for what happened in each division and status.
 const descriptions = [
   [
@@ -43,7 +45,7 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
+function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false) {
   const titleText = `${divisions[div]} faculty that are ${statuses[status]}.`;
   const data = DATA[div + '-' + status];
   const container = d3.select(`#${selectorId}`);
@@ -71,14 +73,14 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
     .domain([0, 1])
     .range([gHeight, 0]);
   const datumFromYear = year => data[year - START_YEAR];
-  const yScaleFromYear = year => yScale(datumFromYear(year))
+  const yScaleFromYear = year => yScale(datumFromYear(year));
 
   this.getScales = () => ({ xScale, yScale });
   this.getDimensions = () => ({ gWidth, gHeight });
   this.getSVG = () => svg;
   this.getLastDatum = () => data[data.length - 1];
 
-  this.labelAxes = () => {    
+  this.labelAxes = () => {
     svg.append('text') // y-axis
       .attr('x', 0)
       .attr('y', gHeight / 2)
@@ -91,7 +93,6 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('class', 'parity-label')
       .attr('class', 'x axis-label')
       .text('Year');
-
   };
 
   this.drawSkeleton = () => {
@@ -105,21 +106,22 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
 
     container
       .insert('p', ':first-child')
-      .html(`From ${START_YEAR} to ${END_YEAR}, among the ${statuses[status]} in the ${divisions[div]}, <b>the percentage of women</b>...`);
+      .html(`Filler <b>text</b>.`);
 
-    // Call the x axis and remove thousand-grouping formatting from years
+    // Draw the x axis and remove thousand-grouping formatting from years
     // (e.g. 2,004 --> 2004)
     svg
       .append('g')
       .attr('class', 'x axis')
       .attr('transform', `translate(0, ${gHeight})`)
       .call(d3.axisBottom(xScale).tickFormat(d3.format('')));
-    // Call the y axis, applying percent formatting
+    // Draw the y axis, applying percent formatting
     svg
       .append('g')
       .attr('class', 'y axis')
       .call(d3.axisLeft(yScale).tickFormat(d3.format('.0%')));
 
+    // Draw the parity line
     const parityLine = d3
       .line()
       .x(xScale)
@@ -139,12 +141,12 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('class', 'parity-label')
       .text('Equal Number of Women and Men'.toUpperCase());
 
-    container.append('p').attr('class', 'description').html('...' + descriptions[div][status]);
+    container.append('p').attr('class', 'description').html('End filler text.');
 
     this.labelAxes();
   };
 
-  this.drawLine = (labelLine = false, duration = 2500) => {
+  this.drawLine = (labelLine = false) => {
     const lineGenerator = d3.line()
       .x((_, i) => xScale(START_YEAR + i))
       .y(yScale);
@@ -161,7 +163,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
         .attr('y', yScale(data[data.length - 1]))
         .attr('class', 'line-label')      
         .transition()
-        .delay(duration)
+        .delay(animTime)
         .text('Reality');
     }
     // Draw path over a specified amount of time
@@ -170,7 +172,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('stroke-dasharray', totalLength + ' ' + totalLength)
       .attr('stroke-dashoffset', totalLength)
       .transition()
-        .duration(duration)
+        .duration(animTime)
         .attr('stroke-dashoffset', 0);
   };
 
@@ -187,7 +189,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('d', areaGenerator)
       .style('fill-opacity', 0)
       .transition()
-        .duration(500)
+        .duration(animTime)
         .style('fill-opacity', 1)
         .on('end', () => {
           svg
@@ -197,7 +199,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
             .attr('y', gHeight * (1 - data[Math.floor(data.length/2)]) + (isAbove ? -1 : 1) * gHeight / 5)
             .attr('opacity', 0)
             .transition()
-              .duration(500)
+              .duration(animTime)
               .attr('opacity', 0.9)
           svg.append('text')
             .attr('class', 'area-label')
@@ -207,7 +209,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
             .text(isAbove ? 'MEN' : 'WOMEN')
             .attr('opacity', 0)            
             .transition()
-              .duration(500)
+              .duration(animTime)
               .attr('opacity', 0.8)
         });    
   };
@@ -225,7 +227,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('r', 4.5)
       .style('opacity', 0)
       .transition()
-        .duration(500)
+        .duration(animTime)
         .style('opacity', 1)
 
     const lines = svg
@@ -241,7 +243,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
       .attr('y2', d => yScaleFromYear(d) + 45)
       .style('opacity', 0)
       .transition()
-        .duration(500)
+        .duration(animTime)
         .style('opacity', 1);
 
     const labels = svg
@@ -260,7 +262,7 @@ function LineGraph(div, status, selectorId, descriptionText, makeTitle=false) {
         (_, i) => `translate(${i === 0 ? 32 : -77}px, 63px)`,
       )
       .transition()
-      .duration(500)
+      .duration(animTime)
       .style('opacity', 1);
   };
 };
@@ -271,7 +273,7 @@ class Activity {
     this.id = divisions[div].replace(/\s/g, '-');
     this.container = d3.select('div#container')
       .append('div')
-      .attr('class', 'chart-container')
+      .attr('class', 'chart-container');
 
     this.drawChart(0);
     this.youDrawIt(3);
@@ -281,7 +283,7 @@ class Activity {
     this.container
       .append('div')
       .attr('id', this.id + '-chart');
-    const chart = new LineGraph(
+    const chart = new PercentGraph(
       this.div,
       status,
       this.id + '-chart',
@@ -302,7 +304,7 @@ class Activity {
     const container = this.container
       .append('div')
       .attr('id', selector);
-    const chart = new LineGraph(
+    const chart = new PercentGraph(
       this.div,
       status,
       selector,

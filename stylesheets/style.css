@@ -274,3 +274,16 @@ p b {
   transform: translate(8px, 4px);
   font-family: Roboto;
 }
+
+.annotation-note-label {
+  fill: #282828;
+  font-family: Roboto;
+  font-size: 1em;
+}
+
+.annotation-connector .connector {
+  stroke-width: 1.5px;
+  stroke: #282828;
+}
+
+

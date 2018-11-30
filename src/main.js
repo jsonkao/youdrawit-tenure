@@ -5,6 +5,9 @@ const END_YEAR = 2017;
 const YEARS = d3.range(START_YEAR, END_YEAR + 1);
 const numYears = YEARS.length;
 
+// The year of a line to which we point an annotation label
+const lineLabelYear = 2014;
+
 const animTime = 500; // transition duration constant
 
 // Copy for what happened in each division and status.
@@ -145,7 +148,24 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
     this.labelAxes();
   };
 
-  this.drawLine = (labelLine = false) => {
+  // position is either -1 (above) or 1 (below)
+  this.labelLine = (position = 1, label = 'Reality') => {
+    const makeAnnotation = d3.annotation()
+      .type(d3.annotationLabel)
+      .annotations([{
+        note: { label: 'Reality' },
+        x: xScale(lineLabelYear),
+        y: yScaleFromYear(lineLabelYear),
+        dx: 0,
+        dy: position * 44,
+      }]);
+
+    svg.append('g')
+      .attr('class', 'annotation-group')
+      .call(makeAnnotation);
+  };
+
+  this.drawLine = () => {
     const lineGenerator = d3.line()
       .x((_, i) => xScale(START_YEAR + i))
       .y(yScale);
@@ -155,23 +175,13 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
       .attr('class', 'line')
       .attr('d', lineGenerator);
 
-    if (labelLine) {
-      svg
-        .append('text')
-        .attr('x', gWidth)
-        .attr('y', yScale(data[data.length - 1]))
-        .attr('class', 'line-label')      
-        .transition()
-        .delay(animTime)
-        .text('Reality');
-    }
     // Draw path over a specified amount of time
     const totalLength = line.node().getTotalLength();
     return line
       .attr('stroke-dasharray', totalLength + ' ' + totalLength)
       .attr('stroke-dashoffset', totalLength)
       .transition()
-        .duration(animTime*2)
+        .duration(2 * animTime)
         .attr('stroke-dashoffset', 0);
   };
 
@@ -310,6 +320,7 @@ class Activity {
     );
     const svg = chart.getSVG();
     const { gWidth, gHeight } = chart.getDimensions();
+    const { xScale, yScale } = chart.getScales();
     const numBands = numYears - 1;
     const bands = svg
       .append('g')
@@ -370,18 +381,36 @@ class Activity {
       btnContainer.selectAll('button').attr('disabled', true)
       drawInstruction.transition().style('visibility', 'hidden');  
       chart
-        .drawLine(true)
+        .drawLine()
         .on('end', () => {
           svg.selectAll('.dot').remove();
 
           // stops mouse events from propagating up to capture, disabling drag funcitonality
           capture.attr('pointer-events', 'none');
-          svg
-            .append('text')
-            .attr('x', gWidth)
-            .attr('y', pathData[pathData.length - 1][1])
-            .attr('class', 'line-label')
-            .text('Your Guess');
+          chart.labelLine(); // label Reality
+
+          // label Your Guess
+          const makeAnnotation = d3.annotation()
+            .type(d3.annotationLabel)
+            .annotations([{
+              note: { label: 'Your Guess' },
+              x: xScale(lineLabelYear),
+              y: pathData[lineLabelYear - START_YEAR][1],
+              dx: 0,
+              dy: -1 * 44,
+            }]);
+
+            console.log({
+              note: { label: 'Your Guess' },
+              x: xScale(lineLabelYear),
+              y: pathData[lineLabelYear - START_YEAR][1],
+              dx: 0,
+              dy: -1 * 44,
+            })
+
+          svg.append('g')
+            .attr('class', 'annotation-group')
+            .call(makeAnnotation);
           svg.select('path.yourpath').classed('completed', true);
 
           container.select('p.description').style('visibility', 'visible');
@@ -407,8 +436,6 @@ class Activity {
       .attr('disabled', true)
       .text("I'm Done")
       .on('click', concludeDrawing);
-
-    const { xScale, yScale } = chart.getScales();
     reset();
     capture.on('mousedown', () => {
       capture

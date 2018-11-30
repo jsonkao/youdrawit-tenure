@@ -171,7 +171,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
       .attr('stroke-dasharray', totalLength + ' ' + totalLength)
       .attr('stroke-dashoffset', totalLength)
       .transition()
-        .duration(animTime)
+        .duration(animTime*2)
         .attr('stroke-dashoffset', 0);
   };
 

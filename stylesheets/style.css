@@ -275,6 +275,19 @@ p b {
   font-family: Roboto;
 }
 
+.annotation-group {
+  animation: transitionIn 500ms;
+}
+
+@keyframes transitionIn {
+    0% {
+        opacity: 0; 
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .annotation-note-label {
   fill: #282828;
   font-family: Roboto;
@@ -286,4 +299,24 @@ p b {
   stroke: #282828;
 }
 
+.annotation-group.guess .annotation-note-label {
+  fill: #fff;
+  font-weight: bold;
+}
 
+.annotation-group.guess .annotation-connector .connector {
+  stroke-width: 1.5px;
+  stroke: #fff;
+}
+
+.annotation-group.dot-labels {
+  font-weight: bold;
+}
+
+.annotation-group.dot-labels .annotations g:first-child .annotation-note-label {
+  transform: translateX(19px);
+}
+
+.annotation-group.dot-labels .annotations g:nth-child(2) .annotation-note-label {
+  transform: translateX(-19px);
+}

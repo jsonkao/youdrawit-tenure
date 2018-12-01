@@ -8,6 +8,8 @@ const numYears = YEARS.length;
 // The year of a line to which we point an annotation label
 const lineLabelYear = 2014;
 
+const CONNECTOR_LENGTH = 44;
+
 const animTime = 500; // transition duration constant
 
 // Copy for what happened in each division and status.
@@ -149,20 +151,24 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
   };
 
   // position is either -1 (above) or 1 (below)
-  this.labelLine = (position = 1, label = 'Reality') => {
+  this.labelLine = (compareWith, label = 'Reality') => {
+    const lineY = yScaleFromYear(lineLabelYear);
+    const placement = lineY > compareWith ? 1 : -1;
     const makeAnnotation = d3.annotation()
       .type(d3.annotationLabel)
       .annotations([{
         note: { label: 'Reality' },
         x: xScale(lineLabelYear),
-        y: yScaleFromYear(lineLabelYear),
+        y: lineY,
         dx: 0,
-        dy: position * 44,
+        dy: placement * CONNECTOR_LENGTH,
       }]);
 
     svg.append('g')
       .attr('class', 'annotation-group')
       .call(makeAnnotation);
+
+    return -placement;
   };
 
   this.drawLine = () => {
@@ -223,7 +229,8 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
         });    
   };
 
-  this.drawEndpoints = () => {
+  // labelPlacement parameter: -1 = above, 1 = below
+  this.drawEndpoints = (labelPlacement = 1) => {
     const dots = svg
       .selectAll('.dot')
       .data([ START_YEAR, END_YEAR ]);
@@ -237,42 +244,23 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
       .style('opacity', 0)
       .transition()
         .duration(animTime)
-        .style('opacity', 1)
-
-    const lines = svg
-      .selectAll('.label-line')
-      .data([ START_YEAR, END_YEAR ]);
-    lines
-      .enter()
-      .append('line')
-      .attr('class', 'label-line')
-      .attr('x1', xScale)
-      .attr('x2', (d, i) => xScale(d) + (1 - 2*i) * 30)
-      .attr('y1', yScaleFromYear)
-      .attr('y2', d => yScaleFromYear(d) + 45)
-      .style('opacity', 0)
-      .transition()
-        .duration(animTime)
         .style('opacity', 1);
 
-    const labels = svg
-      .selectAll('.label')
-      .data([ START_YEAR, END_YEAR ]);
-    return labels
-      .enter()
-      .append('text')
-      .attr('class', 'label')
-      .attr('x', xScale)
-      .attr('y', yScaleFromYear)
-      .text(y => d3.format('.0%')(datumFromYear(y)))
-      .style('opacity', 0)
-      .style(
-        'transform',
-        (_, i) => `translate(${i === 0 ? 32 : -77}px, 63px)`,
-      )
-      .transition()
-      .duration(animTime)
-      .style('opacity', 1);
+    const makeLabels = d3.annotation()
+      .type(d3.annotationLabel)
+      .annotations(
+        [START_YEAR, END_YEAR].map((year, i) => ({
+          note: { label: d3.format('.0%')(datumFromYear(year)) },
+          x: xScale(year),
+          y: yScaleFromYear(year),
+          dx: 30 * (1 - 2*i),
+          dy: labelPlacement * 45,
+        })),
+      );
+
+    svg.append('g')
+      .attr('class', 'annotation-group dot-labels ')
+      .call(makeLabels);
   };
 };
 
@@ -303,7 +291,7 @@ class Activity {
       .on('end', () => {
         chart.drawArea(true); // draw and label area above line
         chart.drawArea(false); // draw and label area below line
-        chart.drawEndpoints(); // label line endpoints
+        chart.drawEndpoints(); // draw and label line endpoints
       });
   }
 
@@ -387,7 +375,9 @@ class Activity {
 
           // stops mouse events from propagating up to capture, disabling drag funcitonality
           capture.attr('pointer-events', 'none');
-          chart.labelLine(); // label Reality
+          
+          const pathY = pathData[lineLabelYear - START_YEAR][1];
+          const guessLabelPlacement = chart.labelLine(pathY); // label Reality
 
           // label Your Guess
           const makeAnnotation = d3.annotation()
@@ -395,22 +385,14 @@ class Activity {
             .annotations([{
               note: { label: 'Your Guess' },
               x: xScale(lineLabelYear),
-              y: pathData[lineLabelYear - START_YEAR][1],
+              y: pathY,
               dx: 0,
-              dy: -1 * 44,
+              dy: guessLabelPlacement * CONNECTOR_LENGTH,
             }]);
-
-            console.log({
-              note: { label: 'Your Guess' },
-              x: xScale(lineLabelYear),
-              y: pathData[lineLabelYear - START_YEAR][1],
-              dx: 0,
-              dy: -1 * 44,
-            })
-
           svg.append('g')
-            .attr('class', 'annotation-group')
+            .attr('class', 'annotation-group guess')
             .call(makeAnnotation);
+
           svg.select('path.yourpath').classed('completed', true);
 
           container.select('p.description').style('visibility', 'visible');
@@ -418,16 +400,15 @@ class Activity {
           chart.drawArea(true);
           chart.drawArea(false);
           svg.selectAll('rect.band').remove();
-          chart
-            .drawEndpoints()
-            .on('end', () => {
-              restartBtn
-                .attr('disabled', null)
-                .text('Next Graph')
-                .on('click', () => {
-                  next();
-                  restartBtn.text('(scroll down)')
-                });
+
+          chart.drawEndpoints(-guessLabelPlacement);
+
+          restartBtn
+            .attr('disabled', null)
+            .text('Next Graph')
+            .on('click', () => {
+              next();
+              restartBtn.text('(scroll down)')
             });
         });
     };

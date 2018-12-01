@@ -191,11 +191,30 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
         .attr('stroke-dashoffset', 0);
   };
 
+  // todo: I never call drawArea(bool) once. merge into one function
   this.drawArea = (isAbove = true) => {
     const areaGenerator = d3.area()
       .x((_, i) => xScale(START_YEAR + i))
       .y0(isAbove ? gHeight : yScale)
       .y1(isAbove ? yScale : 0);
+
+    const makeLabel = d3.annotation()
+      .type(d3.annotationLabel)
+      .annotations([{
+        note: {
+          label: isAbove ? 'MEN' : 'WOMEN',
+          bgPadding: {
+            top: 10,
+            left: 8,
+            right: 8,
+            bottom: 8,
+          },
+        },
+        x: gWidth / 2,
+        y: gHeight / 2,
+        dx: 0,
+        dy: (isAbove ? -1 : 1) * gHeight / 4,
+      }]);
     // Append the path, bind the data, and call the area generator
     return svg
       .insert('path', ':first-child')
@@ -207,6 +226,10 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
         .duration(animTime)
         .style('fill-opacity', 1)
         .on('end', () => {
+          svg.append('g')
+            .attr('class', 'annotation-group area-label')
+            .call(makeLabel);
+          /*
           svg
             .append('rect')
             .attr('class', `area-label-container ${isAbove? 'men' : 'women'}`)
@@ -226,6 +249,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
             .transition()
               .duration(animTime)
               .attr('opacity', 0.8)
+          */
         });    
   };
 

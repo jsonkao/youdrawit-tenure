@@ -1,3 +1,10 @@
+# TODO
+
+We want to make sure the "reality overlayed" is hammered into the reader. We need concrete feedback, like:
+- How many people drew a more accurate picture of reality?
+- Slope of the line, and why it was right or wrong. Should it have been steeper? (Intro should include background on University efforts.)
+- 
+
 _Idea: an actual leaking pipeline. Have color-coded dots that "leak" out of the main pipeline as we advance faculty status. (But remember, the MVP is still just the you-draw-it's.)_
 
 _Idea: Collect statistics on guessed answers._

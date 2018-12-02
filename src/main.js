@@ -18,7 +18,7 @@ const descriptions = [
     div: 'HUM',
     steps: [
       { status: 'NE', msg: 'remained steady around 50%.' },
-      { status: 'TE', msg: 'has grown at a steady but slow rate.' },
+      { status: 'TE', msg: 'Female representation has grown at a steady but leaden rate.' },
     ],
   },
 ];
@@ -51,6 +51,9 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
   const { status, msg } = info;
   const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
+
+  // to be populated at a later time
+  let guessedData;
 
   // Add chart svg to the page, use margin conventions
   const svg = container
@@ -97,12 +100,37 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       .text('Year');
   };
 
+  // We can assume this function was callled when shouldGuess is true.
+  this.revealConclusion = guessedData => {
+    const invYScale = d3
+      .scaleLinear()
+      .domain([gHeight, 0])
+      .range([0, 1]);
+    const mse = guessedData.reduce((acc, d, i) => {
+      const guess = invYScale(d);
+      const actual = data[i];
+      return acc + Math.pow(guess - actual, 2);
+    }, 0) / data.length;
+    const rmse = Math.sqrt(mse);
+    let correctness = 'close';
+    if (rmse > 0.3) {
+      correctness = 'not close';
+    } else if (rmse > 0.2) {
+      correctness = 'a little off';
+    }
+    container
+      .append('p')
+      .attr('class', 'description')
+      .html(`You were ${correctness}. ${msg}`)
+      .style('visibility', 'visible');
+  };
+
   this.drawSkeleton = () => {
     container
       .insert('p', ':first-child')
       .html(
         shouldGuess ?
-          `From 2007 to 2017, how did the percentage of women change within the ${divisions[div]} faculty who were <b>${statuses[status]}</b>?` :
+          `From 2007 to 2017, how did the percentage of women change within the ${divisions[div]} faculty who were <b>${statuses[status]}?</b>` :
           `From 2007 to 2017, the percentage of women in ${divisions[div]} faculty who were <b>${statuses[status]}...</b>`
       );
 
@@ -139,7 +167,12 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       .attr('class', 'parity-label')
       .text('Equal Number of Women and Men'.toUpperCase());
 
-    container.append('p').attr('class', 'description').html(`<b>...${msg}</b>`);
+    if (!shouldGuess) {
+      container
+        .append('p')
+        .attr('class', 'description')
+        .html(`<b>...${msg}</b>`);
+    }
 
     this.labelAxes();
   };
@@ -405,7 +438,7 @@ class Activity {
 
           svg.select('path.yourpath').classed('completed', true);
 
-          container.select('p.description').style('visibility', 'visible');
+          chart.revealConclusion(pathData.map(d => d[1]));
 
           chart.drawAreas();
 

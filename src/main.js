@@ -47,9 +47,8 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function PercentGraph(div, info, selectorId, makeTitle = false) {
+function PercentGraph(div, info, selectorId) {
   const { status, msg } = info;
-  const titleText = `${divisions[div]} faculty that are ${statuses[status]}.`;
   const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
@@ -99,14 +98,6 @@ function PercentGraph(div, info, selectorId, makeTitle = false) {
   };
 
   this.drawSkeleton = () => {
-    // Add chart title
-    if (makeTitle) {
-      const title = container
-        .insert('p', ':first-child')
-        .attr('class', 'title')
-        .text(titleText);
-    }
-
     container
       .insert('p', ':first-child')
       .html(`From 2007 to 2017, among the ${divisions[div]} faculty ${statuses['NE']}, <b>the percentage of women...</b>.`);

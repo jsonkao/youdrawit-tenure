@@ -79,7 +79,7 @@ p b {
 
 .axis-label {
   font-family: Roboto;
-  font-size: 15px;
+  font-size: 16px;
   user-select: none;
 }
 
@@ -113,7 +113,7 @@ p b {
 .axis .tick text {
   font-family: Roboto;
   user-select: none;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .y.axis g:nth-child(2) { /* removes first 0% label to help with crowdedness */

@@ -14,15 +14,13 @@ const animTime = 500; // transition duration constant
 
 // Copy for what happened in each division and status.
 const descriptions = [
-  [
-    '<b>remained steady around 50%.</b>',
-    '<b>remained steady around 60%.</b>',
-    '',
-    '<b>has grown at a steady but slow rate.</b>'
-  ],
-  [ '', '', '', '' ],
-  [ '', '', '', '' ],
-  [ '', '', '', '' ],
+  {
+    div: 'HUM',
+    steps: [
+      { status: 'NE', msg: 'remained steady around 50%.' },
+      { status: 'TE', msg: 'has grown at a steady but slow rate.' },
+    ],
+  },
 ];
 
 const allDivisions = [ 'HUM', 'NAT', 'SOC', 'ENG' ];
@@ -49,7 +47,8 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false) {
+function PercentGraph(div, info, selectorId, makeTitle = false) {
+  const { status, msg } = info;
   const titleText = `${divisions[div]} faculty that are ${statuses[status]}.`;
   const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
@@ -110,7 +109,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
 
     container
       .insert('p', ':first-child')
-      .html(`Filler <b>text</b>.`);
+      .html(`From 2007 to 2017, among the ${divisions[div]} faculty ${statuses['NE']}, <b>the percentage of women...</b>.`);
 
     // Draw the x axis and remove thousand-grouping formatting from years
     // (e.g. 2,004 --> 2004)
@@ -145,7 +144,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
       .attr('class', 'parity-label')
       .text('Equal Number of Women and Men'.toUpperCase());
 
-    container.append('p').attr('class', 'description').html('End filler text.');
+    container.append('p').attr('class', 'description').html(`<b>...${msg}</b>`);
 
     this.labelAxes();
   };
@@ -282,24 +281,25 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
 };
 
 class Activity {
-  constructor(div) {
-    this.div = div;
-    this.id = divisions[div].replace(/\s/g, '-');
+  constructor(activity) {
+    this.activity = activity;
+    this.div = activity.div;
+    this.id = divisions[this.div].replace(/\s/g, '-');
     this.container = d3.select('div#container')
       .append('div')
       .attr('class', 'chart-container');
 
-    this.drawChart('NE');
-    this.youDrawIt('TE');
+    this.drawChart(activity.steps[0]);
+    this.youDrawIt(activity.steps[1]);
   }
 
-  drawChart(status) {
+  drawChart(info) {
     this.container
       .append('div')
       .attr('id', this.id + '-chart');
     const chart = new PercentGraph(
       this.div,
-      status,
+      info,
       this.id + '-chart',
     );
     chart.drawSkeleton();
@@ -311,7 +311,7 @@ class Activity {
       });
   }
 
-  youDrawIt(status) {
+  youDrawIt(info) {
     // this.container.append('p').text('Instructions? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus nulla et arcu ullamcorper tincidunt.');
     const selector = this.id + '-youdrawit';
     const container = this.container
@@ -319,7 +319,7 @@ class Activity {
       .attr('id', selector);
     const chart = new PercentGraph(
       this.div,
-      status,
+      info,
       selector,
     );
     const svg = chart.getSVG();
@@ -492,4 +492,4 @@ class Activity {
 let actNum = 0;
 // const next = () => actNum < 4 && new Activity(actNum++);
 
-new Activity('HUM');
+new Activity(descriptions[0]);

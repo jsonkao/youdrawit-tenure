@@ -18,7 +18,11 @@ const descriptions = [
     div: 'HUM',
     steps: [
       { status: 'NE', msg: 'remained steady around 50%.' },
-      { status: 'TE', msg: 'Female representation has grown at a steady but leaden rate.' },
+      { 
+        status: 'TE',
+        msg: 
+          'Though women make up a strong majority of the Humanities faculty who are not eligible for tenure, the opposite is true within the tenured ranks. The University has spent <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a> to expand diversity throughout the faculty pipeline, but growth among the tenured ranks has remained leaden.',
+      },
     ],
   },
 ];
@@ -112,16 +116,18 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       return acc + Math.pow(guess - actual, 2);
     }, 0) / data.length;
     const rmse = Math.sqrt(mse);
-    let correctness = 'close';
+    let correctness = 'did pretty good!';
     if (rmse > 0.3) {
-      correctness = 'not close';
+      correctness = 'were not close.';
     } else if (rmse > 0.2) {
-      correctness = 'a little off';
+      correctness = 'were a little off.';
+    } else if (rmse > 0.1) {
+      correctness = 'were close.';
     }
     container
       .append('p')
       .attr('class', 'description')
-      .html(`You were ${correctness}. ${msg}`)
+      .html(`<b>You ${correctness}</b> ${msg}`)
       .style('visibility', 'visible');
   };
 

@@ -186,11 +186,14 @@ p b {
 .line {
   stroke: #0F3E3F;
   stroke-width: 2px;
-  stroke-dasharray: 12 3;
   fill: none;
 }
 
-.dot {    
+.line.dotted {
+  stroke-dasharray: 12 3;  
+}
+
+.dot {
   fill: #2B4141;
 }
 

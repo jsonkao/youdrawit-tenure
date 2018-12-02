@@ -151,7 +151,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
   };
 
   // position is either -1 (above) or 1 (below)
-  this.labelLine = (compareWith, label = 'Reality') => {
+  this.labelLine = (compareWith, compareWithNext, label = 'Reality') => {
     const lineY = yScaleFromYear(lineLabelYear);
     const placement = lineY > compareWith ? 1 : -1;
     const makeAnnotation = d3.annotation()
@@ -168,17 +168,18 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
       .attr('class', 'annotation-group')
       .call(makeAnnotation);
 
-    return -placement;
+    return yScaleFromYear(lineLabelYear + 1) > compareWithNext ? -1 : 1;
   };
 
   // if placeOver is true, a line is drawn normally.
   // if it is false, the line is drawn behind everything else.
+  // dotted makes the line dotted.
   this.drawLine = (placeOver = true) => {
     const lineGenerator = d3.line()
       .x((_, i) => xScale(START_YEAR + i))
       .y(yScale);
 
-    const line = placeOver ? svg.append('path') : svg.insert('path', ':last-child');
+    const line = placeOver ? svg.append('path') : svg.insert('path', ':first-child');
     line
       .datum(data)
       .attr('class', 'line')
@@ -186,12 +187,16 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
 
     // Draw path over a specified amount of time
     const totalLength = line.node().getTotalLength();
-    return line
-      .attr('stroke-dasharray', totalLength + ' ' + totalLength)
-      .attr('stroke-dashoffset', totalLength)
-      .transition()
-        .duration(2 * animTime)
-        .attr('stroke-dashoffset', 0);
+    return [
+      line,
+      line
+        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+        .attr('stroke-dashoffset', totalLength)
+        .transition()
+          .duration(2 * animTime)
+          .attr('stroke-dashoffset', 0),
+    ];
+
   };
 
   this.drawArea = isAbove => {    
@@ -299,7 +304,7 @@ class Activity {
     );
     chart.drawSkeleton();
     chart
-      .drawLine()
+      .drawLine()[1]
       .on('end', () => {
         chart.drawAreas();
         chart.drawEndpoints(); // draw and label line endpoints
@@ -379,24 +384,27 @@ class Activity {
     const concludeDrawing = () => {
       btnContainer.selectAll('button').attr('disabled', true)
       drawInstruction.transition().style('visibility', 'hidden');  
-      chart
-        .drawLine(false)
+      svg.selectAll('rect.band').remove();
+      const realityLine = chart.drawLine(false);
+      realityLine[1]
         .on('end', () => {
           svg.selectAll('.dot').remove();
+          realityLine[0].attr('class', 'line dotted');
 
           // stops mouse events from propagating up to capture, disabling drag funcitonality
           capture.attr('pointer-events', 'none');
           
-          const pathY = pathData[lineLabelYear - START_YEAR][1];
-          const guessLabelPlacement = chart.labelLine(pathY); // label Reality
+          const pathY1 = pathData[lineLabelYear - START_YEAR][1];
+          const pathY2 = pathData[lineLabelYear - START_YEAR + 1][1];
+          const guessLabelPlacement = chart.labelLine(pathY1, pathY2); // label Reality
 
           // label Your Guess
           const makeAnnotation = d3.annotation()
             .type(d3.annotationLabel)
             .annotations([{
               note: { label: 'Your Guess' },
-              x: xScale(lineLabelYear),
-              y: pathY,
+              x: xScale(lineLabelYear + 1),
+              y: pathY2,
               dx: 0,
               dy: guessLabelPlacement * CONNECTOR_LENGTH,
             }]);
@@ -409,7 +417,6 @@ class Activity {
           container.select('p.description').style('visibility', 'visible');
 
           chart.drawAreas();
-          svg.selectAll('rect.band').remove();
 
           chart.drawEndpoints(-guessLabelPlacement);
 

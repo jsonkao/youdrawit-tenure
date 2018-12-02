@@ -110,22 +110,10 @@ p b {
   stroke-width: 4px;
 }
 
-.area {
-  transform: translateX(1px);
-}
-
-.below {
-  fill: #fb8072;
-}
-
-.above {
-  fill: #8dd3c7;
-}
-
 .axis .tick text {
   font-family: Roboto;
   user-select: none;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .y.axis g:nth-child(2) { /* removes first 0% label to help with crowdedness */
@@ -197,7 +185,8 @@ p b {
 
 .line {
   stroke: #0F3E3F;
-  stroke-width: 2.5px;
+  stroke-width: 2px;
+  stroke-dasharray: 12 3;
   fill: none;
 }
 

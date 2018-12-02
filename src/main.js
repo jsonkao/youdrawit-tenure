@@ -171,12 +171,15 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
     return -placement;
   };
 
-  this.drawLine = () => {
+  // if placeOver is true, a line is drawn normally.
+  // if it is false, the line is drawn behind everything else.
+  this.drawLine = (placeOver = true) => {
     const lineGenerator = d3.line()
       .x((_, i) => xScale(START_YEAR + i))
       .y(yScale);
-    const line = svg
-      .append('path')
+
+    const line = placeOver ? svg.append('path') : svg.insert('path', ':last-child');
+    line
       .datum(data)
       .attr('class', 'line')
       .attr('d', lineGenerator);
@@ -191,8 +194,7 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
         .attr('stroke-dashoffset', 0);
   };
 
-  // todo: I never call drawArea(bool) once. merge into one function
-  this.drawArea = (isAbove = true) => {
+  this.drawArea = isAbove => {    
     const areaGenerator = d3.area()
       .x((_, i) => xScale(START_YEAR + i))
       .y0(isAbove ? gHeight : yScale)
@@ -215,13 +217,15 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
         dx: 0,
         dy: (isAbove ? -1 : 1) * gHeight / 4,
       }]);
+
     // Append the path, bind the data, and call the area generator
     return svg
       .insert('path', ':first-child')
       .datum(data)
-      .attr('class', `area ${isAbove ? 'above' : 'below'}`)
       .attr('d', areaGenerator)
       .style('fill-opacity', 0)
+      .style('fill', isAbove ? '#8dd3c7' : '#fb8072')
+      .style('transform', 'translateX(1px)')
       .transition()
         .duration(animTime)
         .style('fill-opacity', 1)
@@ -229,28 +233,12 @@ function PercentGraph(div, status, selectorId, descriptionText, makeTitle=false)
           svg.append('g')
             .attr('class', 'annotation-group area-label')
             .call(makeLabel);
-          /*
-          svg
-            .append('rect')
-            .attr('class', `area-label-container ${isAbove? 'men' : 'women'}`)
-            .attr('x', gWidth / 2)
-            .attr('y', gHeight * (1 - data[Math.floor(data.length/2)]) + (isAbove ? -1 : 1) * gHeight / 5)
-            .attr('opacity', 0)
-            .transition()
-              .duration(animTime)
-              .attr('opacity', 0.9)
-          svg.append('text')
-            .attr('class', 'area-label')
-            .attr('x', gWidth / 2)
-            .attr('y', gHeight * (1 - data[Math.floor(data.length/2)]) + (isAbove ? -1 : 1) * gHeight / 5)
-            .attr('text-anchor', 'middle')
-            .text(isAbove ? 'MEN' : 'WOMEN')
-            .attr('opacity', 0)            
-            .transition()
-              .duration(animTime)
-              .attr('opacity', 0.8)
-          */
-        });    
+        });
+  };
+
+  this.drawAreas = () => {
+    this.drawArea(true);
+    this.drawArea(false);
   };
 
   // labelPlacement parameter: -1 = above, 1 = below
@@ -313,8 +301,7 @@ class Activity {
     chart
       .drawLine()
       .on('end', () => {
-        chart.drawArea(true); // draw and label area above line
-        chart.drawArea(false); // draw and label area below line
+        chart.drawAreas();
         chart.drawEndpoints(); // draw and label line endpoints
       });
   }
@@ -393,7 +380,7 @@ class Activity {
       btnContainer.selectAll('button').attr('disabled', true)
       drawInstruction.transition().style('visibility', 'hidden');  
       chart
-        .drawLine()
+        .drawLine(false)
         .on('end', () => {
           svg.selectAll('.dot').remove();
 
@@ -421,8 +408,7 @@ class Activity {
 
           container.select('p.description').style('visibility', 'visible');
 
-          chart.drawArea(true);
-          chart.drawArea(false);
+          chart.drawAreas();
           svg.selectAll('rect.band').remove();
 
           chart.drawEndpoints(-guessLabelPlacement);

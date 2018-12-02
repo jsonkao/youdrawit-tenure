@@ -17,11 +17,22 @@ const descriptions = [
   {
     div: 'HUM',
     steps: [
-      { status: 'NE', msg: 'remained steady around 50%.' },
+      { status: 'NE', msg: 'remained steady around 62%.' },
       { 
         status: 'TE',
         msg: 
-          'Though women make up a strong majority of the Humanities faculty who are not eligible for tenure, the opposite is true within the tenured ranks. The University has spent <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a> to expand diversity throughout the faculty pipeline, but growth among the tenured ranks has remained leaden.',
+          'Though women make up a strong majority of the Humanities faculty who are not eligible for tenure, the opposite holds within the tenured ranks. The University has spent <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a> to expand diversity throughout the faculty pipeline, but growth among the tenured ranks has remained leaden.',
+      },
+    ],
+  },
+  {
+    div: 'NAT',
+    steps: [
+      { status: 'NE', msg: 'rose sharply from 2007 to 2011. It has since neared the parity line.' },
+      { 
+        status: 'TE',
+        msg: 
+          'The University created the Office of the Vice Provost for Diversity in 2004. In the following years it played a significant part in the improvement we saw in female representation at the untenured level. However, progress at the tenured level has <a href="https://www.columbiaspectator.com/news/2018/09/13/new-faculty-diversity-data-shows-stagnation-in-percentage-of-black-latinx-faculty/">stagnated in the past few years</a>.',
       },
     ],
   },
@@ -37,8 +48,8 @@ const divisions = {
 
 const allStatuses = [ 'NE', 'EL', 'TE' ];
 const statuses = {
-  'NE': 'not eligible for tenure',
-  'EL': 'not tenured, but eligible for tenure',
+  'NE': 'NOT eligible for tenure',
+  'EL': 'NOT tenured, but eligible for tenure,',
   'TE': 'tenured',
 };
 
@@ -116,7 +127,7 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       return acc + Math.pow(guess - actual, 2);
     }, 0) / data.length;
     const rmse = Math.sqrt(mse);
-    let correctness = 'did pretty good!';
+    let correctness = 'did well!';
     if (rmse > 0.3) {
       correctness = 'were not close.';
     } else if (rmse > 0.2) {
@@ -136,8 +147,8 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       .insert('p', ':first-child')
       .html(
         shouldGuess ?
-          `From 2007 to 2017, how did the percentage of women change within the ${divisions[div]} faculty who were <b>${statuses[status]}?</b>` :
-          `From 2007 to 2017, the percentage of women in ${divisions[div]} faculty who were <b>${statuses[status]}...</b>`
+          `In the same time period, how do you think the percentage of female faculty in the <b>${divisions[div]}</b> who were <b>${statuses[status]}</b> changed?` :
+          `From 2007 to 2017, the percentage of female faculty in the <b>${divisions[div]}</b> who were <b>${statuses[status]}...</b>`
       );
 
     // Draw the x axis and remove thousand-grouping formatting from years
@@ -238,6 +249,11 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       .y0(isAbove ? gHeight : yScale)
       .y1(isAbove ? yScale : 0);
 
+    let dy = (isAbove ? -1 : 1) * gHeight / 4;
+    if (data[Math.ceil(data.length / 2)] < 0.3) {
+      dy += gHeight / 7;
+    }
+
     const makeLabel = d3.annotation()
       .type(d3.annotationLabel)
       .annotations([{
@@ -253,7 +269,7 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
         x: gWidth / 2,
         y: gHeight / 2,
         dx: 0,
-        dy: (isAbove ? -1 : 1) * gHeight / 4,
+        dy,
       }]);
 
     // Append the path, bind the data, and call the area generator
@@ -304,7 +320,7 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
           x: xScale(year),
           y: yScaleFromYear(year),
           dx: 30 * (1 - 2*i),
-          dy: labelPlacement * 45,
+          dy: labelPlacement * 45 - (datumFromYear(year) < 0.15 && 19),
         })),
       );
 
@@ -432,7 +448,7 @@ class Activity {
           const makeAnnotation = d3.annotation()
             .type(d3.annotationLabel)
             .annotations([{
-              note: { label: 'Your Guess' },
+              note: { label: 'Your Estimate' },
               x: xScale(lineLabelYear + 1),
               y: pathY2,
               dx: 0,
@@ -510,7 +526,4 @@ class Activity {
   };
 }
 
-let actNum = 0;
-// const next = () => actNum < 4 && new Activity(actNum++);
-
-new Activity(descriptions[0]);
+descriptions.map(d => new Activity(d));

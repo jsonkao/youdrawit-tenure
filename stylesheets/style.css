@@ -95,7 +95,7 @@ p b {
 .band {
   fill: #fff;
   stroke-opacity: 1;
-  stroke: #888;
+  stroke: #ccc;
   stroke-dasharray: 8 10;
 }
 
@@ -235,14 +235,8 @@ p b {
 
 .draw-instruction {
   text-anchor: middle;
-  text-decoration: underline;
   font-family: Roboto;
-  font-size: 24px;
-}
-
-.line-label {
-  transform: translate(8px, 4px);
-  font-family: Roboto;
+  font-size: 22px;
 }
 
 .annotation-group {
@@ -262,6 +256,11 @@ p b {
   fill: #282828;
   font-family: Roboto;
   font-size: 1em;
+  user-select: none;
+}
+
+.annotation-group.line-label .annotation-note-label {
+  font-size: 1.1em;
 }
 
 .annotation-connector .connector {

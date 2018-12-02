@@ -47,7 +47,7 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function PercentGraph(div, info, selectorId) {
+function PercentGraph(div, info, selectorId, shouldGuess = false) {
   const { status, msg } = info;
   const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
@@ -100,7 +100,11 @@ function PercentGraph(div, info, selectorId) {
   this.drawSkeleton = () => {
     container
       .insert('p', ':first-child')
-      .html(`From 2007 to 2017, among the ${divisions[div]} faculty ${statuses['NE']}, <b>the percentage of women...</b>.`);
+      .html(
+        shouldGuess ?
+          `From 2007 to 2017, how did the percentage of women change within the ${divisions[div]} faculty who were <b>${statuses[status]}</b>?` :
+          `From 2007 to 2017, the percentage of women in ${divisions[div]} faculty who were <b>${statuses[status]}...</b>`
+      );
 
     // Draw the x axis and remove thousand-grouping formatting from years
     // (e.g. 2,004 --> 2004)
@@ -147,7 +151,7 @@ function PercentGraph(div, info, selectorId) {
     const makeAnnotation = d3.annotation()
       .type(d3.annotationLabel)
       .annotations([{
-        note: { label: 'Reality' },
+        note: { label },
         x: xScale(lineLabelYear),
         y: lineY,
         dx: 0,
@@ -155,7 +159,7 @@ function PercentGraph(div, info, selectorId) {
       }]);
 
     svg.append('g')
-      .attr('class', 'annotation-group')
+      .attr('class', 'annotation-group line-label')
       .call(makeAnnotation);
 
     return yScaleFromYear(lineLabelYear + 1) > compareWithNext ? -1 : 1;
@@ -312,6 +316,7 @@ class Activity {
       this.div,
       info,
       selector,
+      true
     );
     const svg = chart.getSVG();
     const { gWidth, gHeight } = chart.getDimensions();
@@ -325,7 +330,7 @@ class Activity {
       .attr('x', gWidth / 2)
       .attr('class', 'draw-instruction')
       .attr('y', gHeight / 8)
-      .text('Draw your guess')
+      .text(`Draw the line for faculty who were ${statuses[info.status]}.`)
     const bandWidth = gWidth / numBands;
     bands
       .enter()
@@ -366,11 +371,6 @@ class Activity {
 
       container.select('p.descriptionn').style('visibility', 'hidden');
     };
-    const restartBtn = btnContainer.append('button')
-      .classed('button', true)
-      .attr('disabled', true)
-      .text('Start Over')
-      .on('click', reset);
 
     const concludeDrawing = () => {
       btnContainer.selectAll('button').attr('disabled', true)
@@ -400,7 +400,7 @@ class Activity {
               dy: guessLabelPlacement * CONNECTOR_LENGTH,
             }]);
           svg.append('g')
-            .attr('class', 'annotation-group guess')
+            .attr('class', 'annotation-group guess line-label')
             .call(makeAnnotation);
 
           svg.select('path.yourpath').classed('completed', true);
@@ -410,20 +410,12 @@ class Activity {
           chart.drawAreas();
 
           chart.drawEndpoints(-guessLabelPlacement);
-
-          restartBtn
-            .attr('disabled', null)
-            .text('Next Graph')
-            .on('click', () => {
-              next();
-              restartBtn.text('(scroll down)')
-            });
         });
     };
     const doneBtn = btnContainer.append('button')
       .classed('button', true)
       .attr('disabled', true)
-      .text("I'm Done")
+      .text('How did I do?')
       .on('click', concludeDrawing);
     reset();
     capture.on('mousedown', () => {
@@ -436,7 +428,6 @@ class Activity {
           }
           pathData[bandNum] = [bandNum * bandWidth, y];
           if (isFirstTouch) {
-            restartBtn.attr('disabled', null);
             for (let i = 0; i < bandNum; i++) {
               pathData[i] = [i * bandWidth, y];
             }

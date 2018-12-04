@@ -30,26 +30,12 @@
   }
 }
 
-#meta {
-  margin: 0 auto;
-  max-width: 500px;
-  display: flex;
-  padding: 20px;
-  justify-content: space-around;
-}
-
-#meta a {
-  font-size: 18px;
-  font-family: Courier, monospace;
-  color: rgb(0,0,238) !important;
-}
-
 p {
-  font-family: Open Sans;
-  font-size: 19px;
+  font-family: Merriweather;
+  font-size: 18px;
   max-width: 500px;
   margin: 10px auto;
-  line-height: 1.8;
+  line-height: 1.9;
   margin-bottom: 20px;
 }
 
@@ -259,8 +245,23 @@ p b {
   user-select: none;
 }
 
+/* .text-bg styles taken from https://www.nytimes.com/interactive/2015/05/28/upshot/you-draw-it-how-family-income-affects-childrens-college-chances.html*/
+.text-bg {
+  stroke: #fff;
+  stroke-width: 3;
+  opacity: 0.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.connector-dot {
+  fill: #2B4141;
+  stroke: none;
+}
+
 .annotation-group.line-label .annotation-note-label {
   font-size: 1.1em;
+  line-height: 1;
 }
 
 .annotation-connector .connector {

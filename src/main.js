@@ -296,37 +296,34 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
   };
 
   // labelPlacement parameter: -1 = above, 1 = below
-  this.drawEndpoints = (labelPlacement = 1) => {
-    const dots = svg
-      .selectAll('.dot')
-      .data([ START_YEAR, END_YEAR ]);
-    dots
-      .enter()
-      .append('circle')
-      .attr('class', 'dot')
-      .attr('cx', xScale)
-      .attr('cy', yScaleFromYear)
-      .attr('r', 4.5)
-      .style('opacity', 0)
-      .transition()
-        .duration(animTime)
-        .style('opacity', 1);
-
+  this.drawEndpoints = (labelPlacement = 1, forYears = [START_YEAR, END_YEAR]) => {
+    const labels = forYears.map(year => d3.format('.0%')(datumFromYear(year)));
     const makeLabels = d3.annotation()
       .type(d3.annotationLabel)
       .annotations(
-        [START_YEAR, END_YEAR].map((year, i) => ({
-          note: { label: d3.format('.0%')(datumFromYear(year)) },
+        forYears.map((year, i) => ({
+          note: { label: labels[i] },
+          connector: {
+            end: 'dot',
+            endScale: 2.6,
+          },
           x: xScale(year),
           y: yScaleFromYear(year),
           dx: 30 * (1 - 2*i),
           dy: labelPlacement * 45 - (datumFromYear(year) < 0.15 && 19),
         })),
       );
-
-    svg.append('g')
-      .attr('class', 'annotation-group dot-labels ')
-      .call(makeLabels);
+    const a = svg.append('g')
+      .attr('class', 'annotation-group dot-labels');
+    a.call(makeLabels);
+    const labelText = a.selectAll('.annotation-note-label');
+    if (labels.length == 1) {
+      labelText.append('tspan').html(labels[0]).attr('dy', 0).attr('x', 0);
+      labelText.select('tspan').attr('class', 'text-bg')
+    }
+    if (labelPlacement === -1) {
+      labelText.style('transform', (_, i) => `translate(${i > 0 ? '-' : ''}19px, 7px)`);
+    }
   };
 };
 
@@ -423,8 +420,6 @@ class Activity {
       btnContainer.selectAll('button').attr('disabled', true);
       svg.selectAll('.dot').remove();
       drawInstruction.style('visibility', 'visible');
-
-      container.select('p.descriptionn').style('visibility', 'hidden');
     };
 
     const concludeDrawing = () => {
@@ -448,7 +443,10 @@ class Activity {
           const makeAnnotation = d3.annotation()
             .type(d3.annotationLabel)
             .annotations([{
-              note: { label: 'Your Estimate' },
+              note: {
+                label: 'Your Estimate',
+                wrapSplitter: /\n/,
+              },
               x: xScale(lineLabelYear + 1),
               y: pathY2,
               dx: 0,
@@ -521,6 +519,7 @@ class Activity {
         });
     });
     chart.drawSkeleton();
+    chart.drawEndpoints(-1, [START_YEAR]);
     container.select('p.description').style('visibility', 'hidden');
     capture.raise(); // moves our pointer event capturer on top of chart elements
   };

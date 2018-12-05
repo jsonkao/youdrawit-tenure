@@ -19,12 +19,12 @@ const descriptions = [
     steps: [
       {
         status: 'NE',
-        before: "Let's examine the faculty in the Humanities who <b>are not</b> eligible for tenure. From 2007 to 2017, the percentage of female faculty...",
-        msg: '<b>has remained around 62%.</b> This majority persisted over the decade despite the group having grown almost 40% in size.',
+        before: "Let's first examine the faculty in the Humanities who <b>are not</b> eligible for tenure. From 2007 to 2017, the percentage of female faculty...",
+        msg: '<b>has remained around 62%.</b> This majority has persisted over the decade despite the group having grown almost 40% in size.',
       },
       {
         status: 'TE',
-        before: "What about Humanities faculty who <b>are tenured</b>? In the graph below, estimate the female makeup of that group over the same time period (2007 to 2017). We have provided a starting point.",
+        before: "What about Humanities faculty who <b>are tenured</b>? In the graph below, estimate the female percentage of that group over the same time period (2007 to 2017). We have provided a starting point.",
         msg:
           'In the past decade, though women have made up a strong majority of the Humanities faculty who are not eligible for tenure, female representation in tenured faculty positions has grown at a leaden rate.',
       },
@@ -41,7 +41,7 @@ const descriptions = [
       },
       { 
         status: 'TE',
-        before: "Let's now consider the Natural Sciences faculty who <b>are tenured</b>. Did this group see the same growth in female representation as the faculty not on tenure track? In the graph below, draw how you think the female makeup of the tenured level of the Natural Sciences has changed in the past decade.",
+        before: "Let's now consider the Natural Sciences faculty who <b>are tenured</b>. Did this group see the same growth in female representation as the faculty not on tenure track? In the graph below, draw how you think the female percentage of the tenured level of the Natural Sciences has changed in the past decade.",
         msg: 
           'Similar to the Humanities, female representation at the tenured level of the Natural Sciences struggled to keep up with that at the untenured level.',
       },
@@ -395,7 +395,7 @@ class Activity {
       .attr('x', gWidth / 2)
       .attr('class', 'draw-instruction')
       .attr('y', gHeight / 8)
-      .text(`Draw the line (click and drag) for faculty who were ${statuses[info.status]}.`)
+      .text(`Draw (click and drag) the line for faculty who were ${statuses[info.status]}.`)
     const bandWidth = gWidth / numBands;
     bands
       .enter()

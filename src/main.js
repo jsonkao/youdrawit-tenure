@@ -19,12 +19,12 @@ const descriptions = [
     steps: [
       {
         status: 'NE',
-        before: 'From 2007 to 2017, the percentage of female faculty in the Humanities who <b>were not eligible for tenure...</b>',
-        msg: '<b>has remained around 62%</b>, even with the number of Humanities faculty ineligible for tenure having grown almost 140%.',
+        before: "Let's examine the group of faculty in the Humanities who <b>are NOT eligible for tenure</b>. From 2007 to 2017, the percentage of this group that was female...",
+        msg: '<b>has remained around 62%</b>. This majority persisted over the decade despite the group having grown almost 40% in size.',
       },
       {
         status: 'TE',
-        before: 'In the same time period, how do you think the percentage of female faculty in the Humanities who <b>were tenured</b> has changed?',
+        before: "What about the faculty in the Humanities who <b>ARE tenured</b>? What does female representation in this group look like over the same decade?</p><p>In the graph below, draw how you think the female makeup of this group has changed over the same time period. (We have provided a starting point.)",
         msg:
           'Though women make up a strong majority among the Humanities faculty who are ineligible for tenure, the percentage of women in tenured faculty positions has grown at a leaden rate.',
           // <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a>
@@ -36,11 +36,12 @@ const descriptions = [
     steps: [
       {
         status: 'NE',
-        before: 'The Natural Sciences faculty who were ineligible for tenure saw a sharp rise in female representation at the untenured level '
+        before: 'The Natural Sciences faculty who were ineligible for tenure saw a sharp rise in female representation at the untenured level ',
         msg: 'rose sharply from 2007 to 2011. It has since neared the parity line.',
       },
       { 
         status: 'TE',
+        before: '',
         msg: 
           'The University created the Office of the Vice Provost for Diversity in 2004. In the following years it played a significant part in the improvement we saw in female representation at the untenured level. However, progress at the tenured level has <a href="https://www.columbiaspectator.com/news/2018/09/13/new-faculty-diversity-data-shows-stagnation-in-percentage-of-black-latinx-faculty/">stagnated in the past few years</a>.',
       },
@@ -435,7 +436,9 @@ class Activity {
     };
 
     const concludeDrawing = () => {
-      btnContainer.selectAll('button').attr('disabled', true)
+      // TODO: there is a lot of unnecessary button styling because it used to be
+      // 2 buttons.
+      btnContainer.selectAll('button').attr('disabled', true);
       drawInstruction.transition().style('visibility', 'hidden');  
       svg.selectAll('rect.band').remove();
       const realityLine = chart.drawLine(false);
@@ -475,6 +478,9 @@ class Activity {
           chart.drawAreas();
 
           chart.drawEndpoints(-guessLabelPlacement);
+
+          btnContainer.selectAll('button').text('scroll down!');
+
         });
     };
     const doneBtn = btnContainer.append('button')

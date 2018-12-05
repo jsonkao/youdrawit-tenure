@@ -40,11 +40,7 @@ p {
 }
 
 p b {
-  font-weight: 700;
-}
-
-p.footnote {
-  font-size: 15px;
+  font-weight: 900;
 }
 
 #container {
@@ -54,7 +50,6 @@ p.footnote {
 }
 
 .chart-container {
-  margin-bottom: 100px;
   width: 100%;
 }
 

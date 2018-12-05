@@ -43,6 +43,10 @@ p b {
   font-weight: 700;
 }
 
+p.footnote {
+  font-size: 15px;
+}
+
 #container {
   display: flex;
   flex-direction: column;

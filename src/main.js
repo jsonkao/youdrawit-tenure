@@ -24,26 +24,27 @@ const descriptions = [
       },
       {
         status: 'TE',
-        before: "What about the faculty in the Humanities who <b>ARE tenured</b>? What does female representation in this group look like over the same decade?</p><p>In the graph below, draw how you think the female makeup of this group has changed over the same time period. (We have provided a starting point.)",
+        before: "What about the faculty in the Humanities who <b>ARE tenured</b>? In the graph below, draw how you think the female makeup of that group has changed over the same time period (2007 to 2017). We have provided a starting point.",
         msg:
-          'Though women make up a strong majority among the Humanities faculty who are ineligible for tenure, the percentage of women in tenured faculty positions has grown at a leaden rate.',
+          'In the past decade, though women have made up a strong majority of the Humanities faculty who are not eligible for tenure, female representation in tenured faculty positions has grown at a leaden rate.',
           // <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a>
       },
     ],
   },
+  // what even does eligibility mean? how does ineligible differ from eligible?
   {
     div: 'NAT',
     steps: [
       {
         status: 'NE',
-        before: 'The Natural Sciences faculty who were ineligible for tenure saw a sharp rise in female representation at the untenured level ',
-        msg: 'rose sharply from 2007 to 2011. It has since neared the parity line.',
+        before: "We see a similar story in the Natural Sciences. Again, let's first examine the faculty in this division who <b>are NOT eligible for tenure</b>. From 2007 to 2017, the percentage of this group that was female...",
+        msg: 'increased substantially, though the group has since neared parity. The <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">establishment of the Office of the Vice Provost for Diversity</a> played a significant role in this growth.',
       },
       { 
         status: 'TE',
-        before: '',
+        before: "Let's now consider the Natural Sciences faculty who <b>are tenured</b>. Did this group see the same growth in female representation that the untenured level<sup>*</sup> saw? In the graph below, draw how you think the female makeup of the tenured level of the Natural Sciences has changed in the past decade.</p><p class='footnote'><sup>*</sup>When we refer to the untenured level, we mean untenured faculty who are not eligible for tenure.",
         msg: 
-          'The University created the Office of the Vice Provost for Diversity in 2004. In the following years it played a significant part in the improvement we saw in female representation at the untenured level. However, progress at the tenured level has <a href="https://www.columbiaspectator.com/news/2018/09/13/new-faculty-diversity-data-shows-stagnation-in-percentage-of-black-latinx-faculty/">stagnated in the past few years</a>.',
+          'Similar to in the Humanities, female representation at the tenured level of the Natural Sciences struggled to keep up with that at the untenured level.',
       },
     ],
   },
@@ -132,20 +133,20 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       .scaleLinear()
       .domain([gHeight, 0])
       .range([0, 1]);
-    const mse = guessedData.reduce((acc, d, i) => {
-      const guess = invYScale(d);
+    guessedData = guessedData.map(invYScale);
+    const mse = guessedData.reduce((acc, guess, i) => {
       const actual = data[i];
       return acc + Math.pow(guess - actual, 2);
     }, 0) / data.length;
     const rmse = Math.sqrt(mse);
     let correctness = 'estimated well.';
-    if (rmse > 0.3) {
-      correctness = 'were not close.';
-    } else if (rmse > 0.2) {
+    if (rmse > 0.1) {
       correctness = 'did okay.';
-    } else if (rmse > 0.1) {
+    } else if (rmse > 0.07) {
       correctness = 'were close.';
     }
+
+    // TODO: user passed parity line.
     container
       .append('p')
       .attr('class', 'description')

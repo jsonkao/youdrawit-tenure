@@ -17,18 +17,28 @@ const descriptions = [
   {
     div: 'HUM',
     steps: [
-      { status: 'NE', msg: 'remained steady around 62%.' },
-      { 
+      {
+        status: 'NE',
+        before: 'From 2007 to 2017, the percentage of female faculty in the Humanities who <b>were not eligible for tenure...</b>',
+        msg: '<b>has remained around 62%</b>, even with the number of Humanities faculty ineligible for tenure having grown almost 140%.',
+      },
+      {
         status: 'TE',
-        msg: 
-          'Though women make up a strong majority of the Humanities faculty who are not eligible for tenure, the opposite holds within the tenured ranks. The University has spent <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a> to expand diversity throughout the faculty pipeline, but growth among the tenured ranks has remained leaden.',
+        before: 'In the same time period, how do you think the percentage of female faculty in the Humanities who <b>were tenured</b> has changed?',
+        msg:
+          'Though women make up a strong majority among the Humanities faculty who are ineligible for tenure, the percentage of women in tenured faculty positions has grown at a leaden rate.',
+          // <a href="http://features.columbiaspectator.com/eye/2015/04/30/leaks-in-the-pipeline/">tens of millions</a>
       },
     ],
   },
   {
     div: 'NAT',
     steps: [
-      { status: 'NE', msg: 'rose sharply from 2007 to 2011. It has since neared the parity line.' },
+      {
+        status: 'NE',
+        before: 'The Natural Sciences faculty who were ineligible for tenure saw a sharp rise in female representation at the untenured level '
+        msg: 'rose sharply from 2007 to 2011. It has since neared the parity line.',
+      },
       { 
         status: 'TE',
         msg: 
@@ -63,7 +73,7 @@ if (windowWidth < width) {
 const height = width * 5 / 8.6;
 
 function PercentGraph(div, info, selectorId, shouldGuess = false) {
-  const { status, msg } = info;
+  const { status, before, msg } = info;
   const data = TABLES[div + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
@@ -127,11 +137,11 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       return acc + Math.pow(guess - actual, 2);
     }, 0) / data.length;
     const rmse = Math.sqrt(mse);
-    let correctness = 'did well!';
+    let correctness = 'estimated well.';
     if (rmse > 0.3) {
       correctness = 'were not close.';
     } else if (rmse > 0.2) {
-      correctness = 'were a little off.';
+      correctness = 'did okay.';
     } else if (rmse > 0.1) {
       correctness = 'were close.';
     }
@@ -145,11 +155,13 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
   this.drawSkeleton = () => {
     container
       .insert('p', ':first-child')
+      .html(before)
+      /*
       .html(
         shouldGuess ?
-          `In the same time period, how do you think the percentage of female faculty in the <b>${divisions[div]}</b> who were <b>${statuses[status]}</b> changed?` :
-          `From 2007 to 2017, the percentage of female faculty in the <b>${divisions[div]}</b> who were <b>${statuses[status]}...</b>`
-      );
+          `In the same time period, how do you think the percentage of female faculty in the <b>${divisions[div]}</b> who <b>were ${statuses[status]}</b> changed?` :
+          `From 2007 to 2017, the percentage of female faculty in the <b>${divisions[div]}</b> who <b>were ${statuses[status]}...</b>`
+      );*/
 
     // Draw the x axis and remove thousand-grouping formatting from years
     // (e.g. 2,004 --> 2004)
@@ -188,7 +200,7 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       container
         .append('p')
         .attr('class', 'description')
-        .html(`<b>...${msg}</b>`);
+        .html(`<b>...</b>${msg}`);
     }
 
     this.labelAxes();

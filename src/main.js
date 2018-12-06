@@ -5,6 +5,8 @@ const END_YEAR = 2017;
 const YEARS = d3.range(START_YEAR, END_YEAR + 1);
 const numYears = YEARS.length;
 
+let genderEstimates;
+
 // The year of a line to which we point an annotation label
 const lineLabelYear = 2014;
 
@@ -13,14 +15,14 @@ const CONNECTOR_LENGTH = 44;
 const animTime = 500; // transition duration constant
 
 // Copy for what happened in each division and status.
-const descriptions = [
+/*const descriptions = [
   {
     div: 'HUM',
     steps: [
       {
         status: 'NE',
         before: "Let's first examine the faculty in the Humanities who <b>are not</b> eligible for tenure. From 2007 to 2017, the percentage of female faculty...",
-        msg: '<b>has remained around 62%.</b> This majority has persisted over the decade despite the group having grown almost 40% in size.',
+        msg: '<b>...has remained around 62%.</b> This majority has persisted over the decade despite the group having grown almost 40% in size.',
       },
       {
         status: 'TE',
@@ -47,14 +49,16 @@ const descriptions = [
       },
     ],
   },
-];
+];*/
+descriptions = archieml.load(COPY).copy;
+console.log(descriptions);
 
 const allDivisions = [ 'HUM', 'NAT', 'SOC', 'ENG' ];
 const divisions = {
-  'HUM': 'Humanities',
-  'NAT': 'Natural Sciences',
-  'SOC': 'Social Sciences',
-  'ENG': 'Engineering',
+  'Humanities': 'HUM',
+  'Natural Sciences': 'NAT',
+  'Social Sciences': 'SOC',
+  'Engineering': 'ENG',
 };
 
 const allStatuses = [ 'NE', 'EL', 'TE' ];
@@ -73,9 +77,9 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function PercentGraph(div, info, selectorId, shouldGuess = false) {
-  const { status, before, msg } = info;
-  const data = TABLES[div + '-' + status].map(d => d['% Women']);
+function PercentGraph(division, status, info, selectorId, shouldGuess = false) {
+  const { before, after } = info;
+  const data = TABLES[divisions[division] + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
   // to be populated at a later time
@@ -149,20 +153,22 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
     container
       .append('p')
       .attr('class', 'description')
-      .html(`<b>You ${correctness}</b> ${msg}`)
+      .html(`<b>You ${correctness}</b> ${after}`)
       .style('visibility', 'visible');
+
+    // convert to object for firebase
+    guessedData = guessedData.reduce((acc, v, i) => {
+      acc[i] = v;
+      return acc;
+    }, {});
+    guessedData.rmse = rmse;
+    return guessedData;
   };
 
   this.drawSkeleton = () => {
     container
       .insert('p', ':first-child')
       .html(before)
-      /*
-      .html(
-        shouldGuess ?
-          `In the same time period, how do you think the percentage of female faculty in the <b>${divisions[div]}</b> who <b>were ${statuses[status]}</b> changed?` :
-          `From 2007 to 2017, the percentage of female faculty in the <b>${divisions[div]}</b> who <b>were ${statuses[status]}...</b>`
-      );*/
 
     // Draw the x axis and remove thousand-grouping formatting from years
     // (e.g. 2,004 --> 2004)
@@ -201,7 +207,7 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
       container
         .append('p')
         .attr('class', 'description')
-        .html(`<b>...</b>${msg}`);
+        .html(after);
     }
 
     this.labelAxes();
@@ -343,8 +349,9 @@ function PercentGraph(div, info, selectorId, shouldGuess = false) {
 class Activity {
   constructor(activity) {
     this.activity = activity;
-    this.div = activity.div;
-    this.id = divisions[this.div].replace(/\s/g, '-');
+    this.division = activity.division;
+    this.status = activity.steps[1].status;
+    this.id = divisions[this.division].replace(/\s/g, '-');
     this.container = d3.select('div#container')
       .append('div')
       .attr('class', 'chart-container');
@@ -358,7 +365,8 @@ class Activity {
       .append('div')
       .attr('id', this.id + '-chart');
     const chart = new PercentGraph(
-      this.div,
+      this.division,
+      'NE',
       info,
       this.id + '-chart',
     );
@@ -372,13 +380,15 @@ class Activity {
   }
 
   youDrawIt(info) {
+    let status = 'TE';
     // this.container.append('p').text('Instructions? Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus nulla et arcu ullamcorper tincidunt.');
     const selector = this.id + '-youdrawit';
     const container = this.container
       .append('div')
       .attr('id', selector);
     const chart = new PercentGraph(
-      this.div,
+      this.division,
+      status,
       info,
       selector,
       true
@@ -395,7 +405,7 @@ class Activity {
       .attr('x', gWidth / 2)
       .attr('class', 'draw-instruction')
       .attr('y', gHeight / 8)
-      .text(`Draw (click and drag) the line for faculty who were ${statuses[info.status]}.`)
+      .text(`Draw (click and drag) the line for faculty who were ${statuses[status]}.`)
     const bandWidth = gWidth / numBands;
     bands
       .enter()
@@ -473,7 +483,9 @@ class Activity {
 
           svg.select('path.yourpath').classed('completed', true);
 
-          chart.revealConclusion(pathData.map(d => d[1]));
+          const guessedData = chart.revealConclusion(pathData.map(d => d[1]));
+
+          saveGenderEstimate(this.division, 'TE', guessedData);
 
           chart.drawAreas();
 
@@ -543,4 +555,10 @@ class Activity {
   };
 }
 
-descriptions.map(d => new Activity(d));
+document.addEventListener('DOMContentLoaded', function() {
+  getGenderEstimates().then(snapshot => {
+    genderEstimates = snapshot.val();
+    console.log(genderEstimates);
+    descriptions.map(d => new Activity(d));
+  });
+}, false);

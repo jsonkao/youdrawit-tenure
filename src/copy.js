@@ -1,4 +1,9 @@
-const COPY = `[copy]
+const COPY = `
+headline: Intriguing, eye-catching title about faculty diversity pipeline spending?
+leadin: Something about the past ten years of spending on faculty diversity efforts, especially the pipeline. [the angle: Columbia's this liberal institution, but the hiring pipelines and overall tenure track is pretty damn sexist.] Since 2001, reports have come out, offices have sprung up, etc. How does the pipeline look now?
+
+[sections]
+
 division: Humanities
 [.steps]
 

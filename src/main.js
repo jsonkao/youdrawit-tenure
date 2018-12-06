@@ -38,8 +38,7 @@ if (windowWidth < width) {
 }
 const height = width * 5 / 8.6;
 
-function PercentGraph(division, status, info, selectorId, shouldGuess = false) {
-  const { before, after } = info;
+function PercentGraph(division, status, before, after, selectorId, shouldGuess = false) {
   const data = TABLES[divisions[division] + '-' + status].map(d => d['% Women']);
   const container = d3.select(`#${selectorId}`);
 
@@ -311,25 +310,26 @@ class Activity {
   constructor(activity) {
     this.activity = activity;
     this.division = activity.division;
-    this.status = activity.steps[1].status;
     this.id = divisions[this.division].replace(/\s/g, '-');
     this.container = d3.select('div#container')
       .append('div')
       .attr('class', 'chart-container');
 
-    this.drawChart(activity.steps[0]);
-    this.youDrawIt(activity.steps[1]);
+    this.drawChart();
+    this.youDrawIt();
   }
 
-  drawChart(info) {
+  drawChart() {
     const status = 'NE';
+    const { intro, before } = this.activity;
     this.container
       .append('div')
       .attr('id', this.id + '-chart');
     const chart = new PercentGraph(
       this.division,
       status,
-      info,
+      intro,
+      before,
       this.id + '-chart',
     );
     chart.drawSkeleton();
@@ -348,10 +348,12 @@ class Activity {
     const container = this.container
       .append('div')
       .attr('id', selector);
+    const { instructions, conclusion } = this.activity;
     const chart = new PercentGraph(
       this.division,
       status,
-      info,
+      instructions,
+      conclusion,
       selector,
       true
     );

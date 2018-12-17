@@ -1,6 +1,6 @@
 # Story
 
-The story isn't untenured to tenured; it's around the tenure-track.
+The story isn't around the untenured to tenured data; it's around the tenure-track.
 
 # Ideation
 

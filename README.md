@@ -22,3 +22,7 @@ Data was taken from the Office of the Provost ([source](https://provost.columbia
 ![steps](./img/steps.png)
 
 ![race-ethnicity](./img/race-ethnicity.png)
+
+## Revelant Reports
+- [Equal but Inequitable: Who Benefits from Gender-Neutral Tenure Clock Stopping Policies?]
+- Faculty Equity Report

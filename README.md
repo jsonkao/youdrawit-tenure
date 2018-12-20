@@ -1,4 +1,6 @@
-The story isn't around the untenured to tenured data; it's around the tenure-track.
+# Static Preview
+
+![alt text](https://raw.githubusercontent.com/jsonkao/CU-female-representation/master/img/Humanities%20UC%20vs.%20TF%404x.png)
 
 # Ideation
 

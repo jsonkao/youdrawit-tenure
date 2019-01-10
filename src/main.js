@@ -102,7 +102,7 @@ function PercentGraph(division, status, before, after, selectorId, shouldGuess =
       return acc + Math.pow(guess - actual, 2);
     }, 0) / data.length;
     const rmse = Math.sqrt(mse);
-    let correctness = 'did pretty good.';
+    let correctness = 'did pretty well.';
     if (rmse > 0.1) {
       correctness = 'did okay.';
     } else if (rmse > 0.07) {

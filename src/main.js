@@ -213,7 +213,7 @@ function PercentGraph(division, status, before, after, selectorId, shouldGuess =
     return [
       line,
       line
-        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+        .attr('stroke-dasharray', totalLength)
         .attr('stroke-dashoffset', totalLength)
         .transition()
           .duration(2 * animTime)

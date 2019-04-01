@@ -1,6 +1,5 @@
 const COPY = `(you never saw this!)
 headline: After $185 million in diversity funding, a look at tenure-track female representation.
-leadin: <i>This graphics piece is a prototype and should not be published.</i> In the last decade, Columbia has spent $185 million to bolster diversity throughout the faculty pipeline. What does the pipeline look like now?
 
 [sections]
 
@@ -21,4 +20,18 @@ before: <b>...increased substantially</b>, though the group has since neared par
 instructions: Let’s now consider the Natural Sciences faculty who <b>are tenured</b>. Did this group see the same growth in female representation as the faculty not on tenure track? In the graph below, draw how you think the female percentage of the tenured level of the Natural Sciences has changed in the past decade.
 
 conclusion: Similar to the Humanities, female representation at the tenured level of the Natural Sciences struggled to keep up with that at the untenured level.
-(you never saw this!)`;
+
+division: Engineering
+intro: We see a similar story in Engineering. Again, let’s first examine the faculty in this division who <b>are not</b> eligible for tenure. From 2007 to 2017, the percentage of female faculty members...
+
+before: <b>...increased a bit</b>. The <a target="_blank" href="http://senate.columbia.edu/archives/reports_archive/14-15/csw_pipeline%20report_2004-13.pdf">establishment of the Office of the Vice Provost for Diversity</a> likely played a significant role in this growth.
+
+instructions: Let’s now consider the Engineering faculty who <b>are tenured</b>. Did this group see the same growth in female representation as the faculty not on tenure track? In the graph below, draw how you think the female percentage of the tenured level of the Natural Sciences has changed in the past decade.
+
+conclusion: Similar to the Natural sciences, gender diversity at the tenured level of the Engineering struggled to keep up with that at the untenured level.
+
+`;
+
+
+
+

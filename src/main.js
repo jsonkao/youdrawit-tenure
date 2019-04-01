@@ -10,9 +10,8 @@ const CONNECTOR_LENGTH = 44;
 
 let genderEstimates;
 
-// COPY STUFF
 const copy = archieml.load(COPY);
-const { headline, leadin, sections } = copy;
+const { headline, sections } = copy;
 
 const allDivisions = [ 'HUM', 'NAT', 'SOC', 'ENG' ];
 const divisions = {
@@ -521,7 +520,6 @@ class Activity {
 
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('headline').innerHTML = headline;
-  document.getElementById('leadin').innerHTML = leadin;
   sections.map(s => new Activity(s));
   getGenderEstimates().then(snapshot => {
     genderEstimates = snapshot.val();

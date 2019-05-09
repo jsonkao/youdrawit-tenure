@@ -1,6 +1,6 @@
 const COPY = `(you never saw this!)
-headline: After $185 million in diversity funding, a look at tenure-track female representation.
-leadin: <i>This graphics piece is a prototype and should not be published.</i> In the last decade, Columbia has spent $185 million to bolster diversity throughout the faculty pipeline. What does the pipeline look like now?
+headline: After $185 million in faculty diversity funding, a look at tenure-track female representation.
+leadin: In the last decade, Columbia has spent $185 million to bolster diversity throughout the faculty pipeline. What does the pipeline look like now?
 
 [sections]
 

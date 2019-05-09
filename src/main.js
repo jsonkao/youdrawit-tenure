@@ -413,7 +413,7 @@ class Activity {
       // TODO: there is a lot of unnecessary button styling because it used to be
       // 2 buttons.
       btnContainer.selectAll('button').attr('disabled', true);
-      drawInstruction.transition().style('visibility', 'hidden');  
+      drawInstruction.transition().style('visibility', 'hidden');
       svg.selectAll('rect.band').remove();
       const realityLine = chart.drawLine(false);
       realityLine[1]
@@ -423,7 +423,7 @@ class Activity {
 
           // stops mouse events from propagating up to capture, disabling drag funcitonality
           capture.attr('pointer-events', 'none');
-          
+
           const pathY1 = pathData[lineLabelYear - START_YEAR][1];
           const pathY2 = pathData[lineLabelYear - START_YEAR + 1][1];
           const guessLabelPlacement = chart.labelLine(pathY1, pathY2); // label Reality

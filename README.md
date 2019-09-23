@@ -24,5 +24,6 @@ Data was taken from the Office of the Provost ([source](https://provost.columbia
 ![race-ethnicity](./img/race-ethnicity.png)
 
 ## Revelant Reports
-- [Equal but Inequitable: Who Benefits from Gender-Neutral Tenure Clock Stopping Policies?]
-- Faculty Equity Report
+
+- [Equal but Inequitable: Who Benefits from Gender-Neutral Tenure Clock Stopping Policies?](https://www.iza.org/publications/dp/9904/equal-but-inequitable-who-benefits-from-gender-neutral-tenure-clock-stopping-policies)
+- [Faculty Equity Report](https://fas.columbia.edu/files/fas/content/Columbia-ArtsandSciences-PPC-Equity-Reports-2018.pdf)
